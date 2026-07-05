@@ -79,12 +79,12 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
 
   const form = (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <Alert variant="destructive" aria-live="polite">
-          <CircleAlert />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        {error ? (
+          <Alert variant="destructive" aria-live="polite">
+            <CircleAlert />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
 
       <div className="space-y-2">
         <Label htmlFor="auth-sign-in-email">Email</Label>
@@ -128,7 +128,7 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
     return (
       <>
         {form}
-        {showResend && <VerificationPending variant="inline" email={email} />}
+        {showResend ? <VerificationPending variant="inline" email={email} /> : null}
       </>
     );
   }
@@ -146,7 +146,7 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
       </CardHeader>
       <CardContent>
         {form}
-        {showResend && <VerificationPending variant="inline" email={email} />}
+        {showResend ? <VerificationPending variant="inline" email={email} /> : null}
       </CardContent>
     </Card>
   );

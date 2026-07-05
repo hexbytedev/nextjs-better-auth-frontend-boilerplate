@@ -88,12 +88,12 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
 
   const form = (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
+      {error ? (
         <Alert variant="destructive" aria-live="polite">
           <CircleAlert />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-      )}
+      ) : null}
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">

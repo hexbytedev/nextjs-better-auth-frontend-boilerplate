@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { SignInForm } from "@/components/auth";
+import { SignInForm } from "@/components/auth/sign-in-form";
 
 function SignInFormWithCallback() {
   const searchParams = useSearchParams();

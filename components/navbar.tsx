@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { Shield } from "lucide-react";
-import { Show, UserButton, SignInButton, SignUpButton } from "@/components/auth";
+import { Show } from "@/components/auth/show";
+import { UserButton } from "@/components/auth/user-button";
+import { SignInButton } from "@/components/auth/sign-in-button";
+import { SignUpButton } from "@/components/auth/sign-up-button";
 
 export function Navbar() {
   return (

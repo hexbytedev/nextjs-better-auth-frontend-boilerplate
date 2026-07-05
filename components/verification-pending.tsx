@@ -114,11 +114,11 @@ export function VerificationPending({
               {description ?? "Please check your inbox for a verification link."}
             </p>
           </div>
-          {resent && (
+          {resent ? (
             <p className="text-sm text-muted-foreground">
               Verification email sent. Check your inbox.
             </p>
-          )}
+          ) : null}
           <div>{resendButton}</div>
         </div>
       </div>
@@ -138,11 +138,11 @@ export function VerificationPending({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          {resent && (
+          {resent ? (
             <p className="text-sm text-muted-foreground">
               Verification email resent successfully.
             </p>
-          )}
+          ) : null}
           {resendButton}
           <Link
             href={backHref}

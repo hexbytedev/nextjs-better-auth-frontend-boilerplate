@@ -8,7 +8,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LayoutDashboard, User, Mail } from "lucide-react";
-import { Show, useAuth } from "@/components/auth";
+import { Show } from "@/components/auth/show";
+import { useAuth } from "@/components/auth/auth-provider";
 import Image from "next/image";
 
 function ProfileCard() {
@@ -29,7 +30,7 @@ function ProfileCard() {
       </CardHeader>
       <CardContent>
         <div className="space-y-3 text-sm">
-          {image && (
+          {image ? (
             <Image
               src={image}
               alt="Avatar"
@@ -37,19 +38,19 @@ function ProfileCard() {
               height={64}
               className="h-16 w-16 rounded-full"
             />
-          )}
-          {name && (
+          ) : null}
+          {name ? (
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <span className="font-medium">Name:</span> {name}
             </div>
-          )}
-          {email && (
+          ) : null}
+          {email ? (
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <span className="font-medium">Email:</span> {email}
             </div>
-          )}
+          ) : null}
         </div>
       </CardContent>
     </Card>

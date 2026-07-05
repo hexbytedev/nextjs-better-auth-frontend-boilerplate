@@ -1,12 +1,10 @@
 "use client";
 
 import { Shield } from "lucide-react";
-import {
-  SignInButton,
-  SignUpButton,
-  UserButton,
-  Show,
-} from "@/components/auth";
+import { SignInButton } from "@/components/auth/sign-in-button";
+import { SignUpButton } from "@/components/auth/sign-up-button";
+import { UserButton } from "@/components/auth/user-button";
+import { Show } from "@/components/auth/show";
 
 export default function Home() {
   return (

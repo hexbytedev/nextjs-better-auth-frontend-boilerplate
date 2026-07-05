@@ -53,10 +53,10 @@ export function UserButton() {
       <DropdownMenuContent align="end" className="w-56">
         <div className="flex items-center gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
-            {name && <p className="font-medium text-sm">{name}</p>}
-            {email && (
+            {name ? <p className="font-medium text-sm">{name}</p> : null}
+            {email ? (
               <p className="text-xs text-muted-foreground truncate">{email}</p>
-            )}
+            ) : null}
           </div>
         </div>
         <DropdownMenuSeparator />
