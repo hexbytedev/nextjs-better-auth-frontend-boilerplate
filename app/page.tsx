@@ -1,6 +1,12 @@
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+"use client";
+
 import { Shield } from "lucide-react";
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  Show,
+} from "@/components/auth";
 
 export default function Home() {
   return (
@@ -16,14 +22,22 @@ export default function Home() {
           A Next.js client application using Better Auth with a separate
           authentication server.
         </p>
-        <div className="flex gap-4 justify-center">
-          <Link href="/sign-in" className={buttonVariants()}>
-            Sign In
-          </Link>
-          <Link href="/sign-up" className={buttonVariants({ variant: "outline" })}>
-            Sign Up
-          </Link>
-        </div>
+
+        <Show when="signed-out">
+          <div className="flex gap-4 justify-center">
+            <SignInButton />
+            <SignUpButton />
+          </div>
+        </Show>
+
+        <Show when="signed-in">
+          <div className="flex flex-col items-center gap-4">
+            <UserButton />
+            <p className="text-sm text-muted-foreground">
+              You are signed in
+            </p>
+          </div>
+        </Show>
       </div>
     </div>
   );
