@@ -93,7 +93,7 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
+                placeholder="you@example.com…"
           autoComplete="email"
           spellCheck={false}
           required
@@ -107,7 +107,7 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Your password"
+              placeholder="Your password…"
           autoComplete="current-password"
           required
         />
@@ -119,7 +119,7 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
         ) : (
           <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
         )}
-        {loading ? "Signing in\u2026" : "Sign In"}
+        {loading ? "Signing in…" : "Sign In"}
       </Button>
     </form>
   );

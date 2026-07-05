@@ -102,7 +102,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
             id="auth-sign-up-firstName"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            placeholder="John"
+            placeholder="John…"
             required
           />
         </div>
@@ -112,7 +112,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
             id="auth-sign-up-lastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="Doe"
+            placeholder="Doe…"
             required
           />
         </div>
@@ -125,7 +125,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
+            placeholder="you@example.com…"
           autoComplete="email"
           spellCheck={false}
           required
@@ -139,7 +139,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Min 8 characters"
+          placeholder="Min 8 characters…"
           autoComplete="new-password"
           required
           minLength={8}
@@ -152,7 +152,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
         ) : (
           <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" />
         )}
-        {loading ? "Creating account\u2026" : "Sign Up"}
+        {loading ? "Creating account…" : "Sign Up"}
       </Button>
     </form>
   );

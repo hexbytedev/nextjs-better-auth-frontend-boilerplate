@@ -105,7 +105,7 @@ export default function SettingsPage() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder={session?.user.name ?? "Your name"}
+                  placeholder="Your name…"
                   required
                 />
               </div>
@@ -127,7 +127,7 @@ export default function SettingsPage() {
                 ) : (
                   <Save className="mr-2 h-4 w-4" aria-hidden="true" />
                 )}
-                {loading ? "Saving\u2026" : "Save Changes"}
+                {loading ? "Saving…" : "Save Changes"}
               </Button>
             </form>
           </CardContent>

@@ -90,7 +90,7 @@ export function VerificationPending({
         <Send className="mr-2 h-4 w-4" aria-hidden="true" />
       )}
       {resending
-        ? "Sending\u2026"
+        ? "Sending…"
         : cooldown > 0
           ? `Resend in ${cooldown}s`
           : "Resend Verification Email"}
@@ -151,7 +151,7 @@ export function VerificationPending({
               className: "w-full",
             })}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
             {backLabel}
           </Link>
         </CardContent>

@@ -1,21 +1,23 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import { authClient } from "@/lib/auth-client";
-import type { AuthContextValue, AuthProviderProps, ModalView } from "./types";
+import type { AuthContextValue, AuthProviderProps } from "./types";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const { data: sessionData, isPending } = authClient.useSession();
-  const [modalView, setModalView] = useState<ModalView>(null);
 
-  const session = (sessionData as unknown as { session: Record<string, unknown> | null })?.session ?? null;
-  const user = (sessionData as unknown as { user: Record<string, unknown> | null })?.user ?? null;
+  const session = useMemo(
+    () => (sessionData as unknown as { session: Record<string, unknown> | null })?.session ?? null,
+    [sessionData]
+  );
 
-  const openSignIn = useCallback(() => setModalView("signin"), []);
-  const openSignUp = useCallback(() => setModalView("signup"), []);
-  const close = useCallback(() => setModalView(null), []);
+  const user = useMemo(
+    () => (sessionData as unknown as { user: Record<string, unknown> | null })?.user ?? null,
+    [sessionData]
+  );
 
   const signOut = useCallback(async () => {
     await authClient.signOut();
@@ -28,13 +30,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user,
       isLoaded: !isPending,
       isSignedIn: !!session,
-      openSignIn,
-      openSignUp,
-      close,
       signOut,
-      modalView,
     }),
-    [session, user, isPending, openSignIn, openSignUp, close, signOut, modalView]
+    [session, user, isPending, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

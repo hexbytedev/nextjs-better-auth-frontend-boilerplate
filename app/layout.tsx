@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/auth";
-import { AuthModal } from "@/components/auth";
+import { Navbar } from "@/components/navbar";
 
 const outfitHeading = Outfit({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -44,8 +44,8 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
+          <Navbar />
           {children}
-          <AuthModal />
         </AuthProvider>
       </body>
     </html>

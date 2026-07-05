@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "./auth-provider";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 function getInitials(name: string | null | undefined): string {
@@ -31,11 +32,16 @@ export function UserButton() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="relative h-9 w-9 rounded-full">
+      <DropdownMenuTrigger
+        className="relative h-9 w-9 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        aria-label={name ? `${name} account menu` : "Account menu"}
+      >
         {image ? (
-          <img
+          <Image
             src={image}
             alt={name ?? "User"}
+            width={36}
+            height={36}
             className="h-9 w-9 rounded-full object-cover"
           />
         ) : (
