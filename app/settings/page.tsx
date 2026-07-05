@@ -29,6 +29,10 @@ import {
   RefreshCw,
   Copy,
   Check,
+  Link2,
+  Unlink,
+  Globe,
+  Fingerprint,
 } from "lucide-react";
 import { Show } from "@/components/auth/show";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -274,6 +278,316 @@ function PasswordSection() {
             {loading ? "Changing…" : "Change Password"}
           </Button>
         </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface LinkedAccount {
+  id: string;
+  providerId: string;
+  accountId: string;
+  createdAt: string;
+}
+
+const PROVIDER_LABELS: Record<string, string> = {
+  google: "Google",
+  github: "GitHub",
+  apple: "Apple",
+  facebook: "Facebook",
+  discord: "Discord",
+  twitter: "Twitter",
+  microsoft: "Microsoft",
+};
+
+function getProviderLabel(providerId: string): string {
+  return PROVIDER_LABELS[providerId] ?? providerId;
+}
+
+function ConnectedAccountsSection() {
+  const [accounts, setAccounts] = useState<LinkedAccount[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [linking, setLinking] = useState<string | null>(null);
+  const [unlinking, setUnlinking] = useState<string | null>(null);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const { data, error: fetchError } = await authClient.listAccounts();
+      if (!cancelled) {
+        if (fetchError) {
+          setError("Failed to load connected accounts.");
+        } else {
+          setAccounts((data as unknown as LinkedAccount[]) ?? []);
+        }
+        setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleLink = async (provider: string) => {
+    setLinking(provider);
+    setError("");
+    setSuccess("");
+
+    const { error: linkError } = await authClient.linkSocial({
+      provider,
+      callbackURL: "/settings",
+    });
+
+    if (linkError) {
+      setError(linkError.message ?? `Failed to link ${getProviderLabel(provider)}.`);
+    }
+    setLinking(null);
+  };
+
+  const handleUnlink = async (providerId: string) => {
+    setUnlinking(providerId);
+    setError("");
+    setSuccess("");
+
+    const { error: unlinkError } = await authClient.unlinkAccount({
+      providerId,
+    });
+
+    if (unlinkError) {
+      setError(unlinkError.message ?? "Failed to unlink account.");
+    } else {
+      setSuccess(`Disconnected from ${getProviderLabel(providerId)}.`);
+      setAccounts((prev) => prev.filter((a) => a.providerId !== providerId));
+    }
+    setUnlinking(null);
+  };
+
+  const availableProviders = ["google", "github"].filter(
+    (p) => !accounts.some((a) => a.providerId === p)
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Globe className="h-5 w-5" aria-hidden="true" />
+          Connected Accounts
+        </CardTitle>
+        <CardDescription>Manage linked social providers</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {success ? (
+          <p className="mb-4 text-sm text-green-600" role="status" aria-live="polite">{success}</p>
+        ) : null}
+        {error ? (
+          <p className="mb-4 text-sm text-destructive" role="alert">{error}</p>
+        ) : null}
+
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" aria-hidden="true" />
+          </div>
+        ) : accounts.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No connected accounts.</p>
+        ) : (
+          <div className="mb-4 space-y-3">
+            {accounts.map((account) => (
+              <div
+                key={account.id}
+                className="flex items-center justify-between rounded-lg border p-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                    <Globe className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{getProviderLabel(account.providerId)}</p>
+                    <p className="text-xs text-muted-foreground">Connected</p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleUnlink(account.providerId)}
+                  disabled={unlinking === account.providerId}
+                  aria-label={`Disconnect ${getProviderLabel(account.providerId)}`}
+                >
+                  {unlinking === account.providerId ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Unlink className="h-4 w-4 text-destructive" aria-hidden="true" />
+                  )}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {availableProviders.length > 0 ? (
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Link another account</p>
+            <div className="flex flex-wrap gap-2">
+              {availableProviders.map((provider) => (
+                <Button
+                  key={provider}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleLink(provider)}
+                  disabled={linking === provider}
+                >
+                  {linking === provider ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Link2 className="mr-2 h-4 w-4" aria-hidden="true" />
+                  )}
+                  {getProviderLabel(provider)}
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+interface Passkey {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
+function PasskeySection() {
+  const [passkeys, setPasskeys] = useState<Passkey[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [registering, setRegistering] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const { data, error: fetchError } = await authClient.passkey.listUserPasskeys();
+      if (!cancelled) {
+        if (fetchError) {
+          setError("Failed to load passkeys.");
+        } else {
+          setPasskeys((data as unknown as Passkey[]) ?? []);
+        }
+        setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleRegister = async () => {
+    setRegistering(true);
+    setError("");
+    setSuccess("");
+
+    const { error: regError } = await authClient.passkey.addPasskey({
+      name: "Passkey",
+    });
+
+    if (regError) {
+      setError(regError.message ?? "Failed to register passkey.");
+    } else {
+      setSuccess("Passkey registered successfully.");
+      // Refresh list
+      const { data } = await authClient.passkey.listUserPasskeys();
+      setPasskeys((data as unknown as Passkey[]) ?? []);
+    }
+    setRegistering(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeleting(id);
+    setError("");
+    setSuccess("");
+
+    const { error: delError } = await authClient.passkey.deletePasskey({ id });
+
+    if (delError) {
+      setError(delError.message ?? "Failed to delete passkey.");
+    } else {
+      setPasskeys((prev) => prev.filter((p) => p.id !== id));
+      setSuccess("Passkey deleted.");
+    }
+    setDeleting(null);
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(dateStr));
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Fingerprint className="h-5 w-5" aria-hidden="true" />
+          Passkeys
+        </CardTitle>
+        <CardDescription>Sign in with biometrics or security keys</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {success ? (
+          <p className="mb-4 text-sm text-green-600" role="status" aria-live="polite">{success}</p>
+        ) : null}
+        {error ? (
+          <p className="mb-4 text-sm text-destructive" role="alert">{error}</p>
+        ) : null}
+
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" aria-hidden="true" />
+          </div>
+        ) : passkeys.length > 0 ? (
+          <div className="mb-4 space-y-3">
+            {passkeys.map((passkey) => (
+              <div
+                key={passkey.id}
+                className="flex items-center justify-between rounded-lg border p-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{passkey.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Added {formatDate(passkey.createdAt)}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDelete(passkey.id)}
+                  disabled={deleting === passkey.id}
+                  aria-label={`Delete passkey ${passkey.name}`}
+                >
+                  {deleting === passkey.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
+                  )}
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mb-4 text-sm text-muted-foreground">No passkeys registered.</p>
+        )}
+
+        <Button onClick={handleRegister} disabled={registering} variant="outline">
+          {registering ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <Fingerprint className="mr-2 h-4 w-4" aria-hidden="true" />
+          )}
+          {registering ? "Registering…" : "Add Passkey"}
+        </Button>
       </CardContent>
     </Card>
   );
@@ -803,6 +1117,8 @@ export default function SettingsPage() {
           <ProfileSection />
           <EmailSection />
           <PasswordSection />
+          <ConnectedAccountsSection />
+          <PasskeySection />
           <TwoFactorSection />
           <SessionsSection />
           <DangerZoneSection />

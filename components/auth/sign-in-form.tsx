@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LogIn, Loader2, CircleAlert } from "lucide-react";
+import { LogIn, Loader2, CircleAlert, Fingerprint } from "lucide-react";
 import { VerificationPending } from "@/components/verification-pending";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { SignInFormProps } from "./types";
@@ -45,7 +45,19 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
+
+  // Preload passkeys for conditional UI (browser autofill)
+  useEffect(() => {
+    if (
+      !PublicKeyCredential?.isConditionalMediationAvailable ||
+      !PublicKeyCredential.isConditionalMediationAvailable()
+    ) {
+      return;
+    }
+    void authClient.signIn.passkey({ autoFill: true });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +89,31 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
     setLoading(false);
   };
 
+  const handlePasskeySignIn = async () => {
+    setPasskeyLoading(true);
+    setError("");
+
+    const { error: passkeyError } = await authClient.signIn.passkey({
+      fetchOptions: {
+        onSuccess: () => {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            window.location.href = "/dashboard";
+          }
+        },
+        onError: (ctx) => {
+          setError(ctx.error.message ?? "Passkey sign-in failed. Please try again.");
+        },
+      },
+    });
+
+    if (passkeyError) {
+      setError(passkeyError.message ?? "Passkey sign-in failed. Please try again.");
+    }
+    setPasskeyLoading(false);
+  };
+
   const form = (
     <form onSubmit={handleSubmit} className="space-y-4">
         {error ? (
@@ -94,7 +131,7 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
           value={email}
           onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com…"
-          autoComplete="email"
+          autoComplete="email webauthn"
           spellCheck={false}
           required
         />
@@ -113,13 +150,37 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button type="submit" className="w-full" disabled={loading || passkeyLoading}>
         {loading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
         ) : (
           <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
         )}
         {loading ? "Signing in…" : "Sign In"}
+      </Button>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">or</span>
+        </div>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={handlePasskeySignIn}
+        disabled={loading || passkeyLoading}
+      >
+        {passkeyLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+        ) : (
+          <Fingerprint className="mr-2 h-4 w-4" aria-hidden="true" />
+        )}
+        Sign in with Passkey
       </Button>
     </form>
   );
