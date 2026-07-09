@@ -88,10 +88,15 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
     setLoading(true);
     setShowResend(false);
 
-    const response = await authClient.signIn.email(
+    await authClient.signIn.email(
       { email, password },
       {
-        onSuccess: () => {
+        onSuccess: (ctx) => {
+          if (ctx.data.twoFactorRedirect) {
+            setTwoFactorRequired(true);
+            setLoading(false);
+            return;
+          }
           if (onSuccess) {
             onSuccess();
           } else {
@@ -101,17 +106,10 @@ export function SignInForm({ onSuccess, showCardWrapper = true }: SignInFormProp
         onError: (ctx) => {
           setError(getErrorMessage(ctx.error));
           setShowResend(isEmailNotVerified(ctx.error));
+          setLoading(false);
         },
       }
     );
-
-    if (response.error) {
-      setError(getErrorMessage(response.error));
-      setShowResend(isEmailNotVerified(response.error));
-    } else if ((response.data as Record<string, unknown>)?.twoFactorRedirect) {
-      setTwoFactorRequired(true);
-    }
-    setLoading(false);
   };
 
   const handleTwoFactorVerify = async (e: React.FormEvent) => {
