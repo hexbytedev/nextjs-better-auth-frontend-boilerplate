@@ -17,7 +17,7 @@ function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
-  const isError = error === "invalid_token";
+  const isError = error === "INVALID_TOKEN" || error === "invalid_token";
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
