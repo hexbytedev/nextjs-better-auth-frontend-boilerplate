@@ -41,7 +41,7 @@ function getErrorMessage(error: unknown): string {
   );
 }
 
-export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProps) {
+export function SignUpForm({ onSuccess, showCardWrapper = true, callbackURL = "/verify-email" }: SignUpFormProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,7 +56,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
     setLoading(true);
 
     const { error: signUpError, data } = await authClient.signUp.email(
-      { name: `${firstName} ${lastName}`, email, password },
+      { name: `${firstName} ${lastName}`, email, password, callbackURL: `${window.location.origin}${callbackURL}` },
       {
         onError: (ctx) => {
           setError(getErrorMessage(ctx.error));
@@ -76,7 +76,7 @@ export function SignUpForm({ onSuccess, showCardWrapper = true }: SignUpFormProp
       if (onSuccess) {
         onSuccess();
       } else {
-        window.location.href = "/dashboard";
+        window.location.href = callbackURL;
       }
     }
     setLoading(false);

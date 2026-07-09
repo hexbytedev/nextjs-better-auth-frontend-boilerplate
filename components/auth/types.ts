@@ -20,6 +20,7 @@ export interface SignInFormProps {
 export interface SignUpFormProps {
   onSuccess?: () => void;
   showCardWrapper?: boolean;
+  callbackURL?: string;
 }
 
 export interface ButtonProps {

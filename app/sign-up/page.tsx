@@ -7,12 +7,12 @@ import { SignUpForm } from "@/components/auth/sign-up-form";
 
 function SignUpFormWithCallback() {
   const searchParams = useSearchParams();
-  const callbackURL = searchParams.get("callbackURL") || "/dashboard";
+  const callbackURL = searchParams.get("callbackURL") || "/verify-email";
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-4">
-        <SignUpForm showCardWrapper />
+        <SignUpForm showCardWrapper callbackURL={callbackURL} />
         <div className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
