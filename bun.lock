@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "nextjs-better-auth-seperate-server-boilerplate",
+      "name": "nextjs-better-auth-frontend-boilerplate",
       "dependencies": {
         "@base-ui/react": "^1.6.0",
         "@better-auth/passkey": "^1.6.23",

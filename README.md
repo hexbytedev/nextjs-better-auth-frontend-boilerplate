@@ -33,8 +33,8 @@ A Next.js 16 client application using [Better Auth](https://better-auth.com) wit
 
 ```bash
 # Clone the repo
-git clone https://github.com/hexbytedev/nextjs-better-auth-seperate-server-boilerplate.git
-cd nextjs-better-auth-seperate-server-boilerplate
+git clone https://github.com/hexbytedev/nextjs-better-auth-frontend-boilerplate.git
+cd nextjs-better-auth-frontend-boilerplate
 
 # Install dependencies
 bun install
