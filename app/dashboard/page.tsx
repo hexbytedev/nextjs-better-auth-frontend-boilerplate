@@ -10,7 +10,6 @@ import {
 import { LayoutDashboard, User, Mail } from "lucide-react";
 import { Show } from "@/components/auth/show";
 import { useAuth } from "@/components/auth/auth-provider";
-import Image from "next/image";
 
 function ProfileCard() {
   const { user } = useAuth();
@@ -31,7 +30,7 @@ function ProfileCard() {
       <CardContent>
         <div className="space-y-3 text-sm">
           {image ? (
-            <Image
+            <img
               src={image}
               alt="Avatar"
               width={64}

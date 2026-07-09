@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuth } from "./auth-provider";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +36,7 @@ export function UserButton() {
         aria-label={name ? `${name} account menu` : "Account menu"}
       >
         {image ? (
-          <Image
+          <img
             src={image}
             alt={name ?? "User"}
             width={36}
