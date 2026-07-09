@@ -1,0 +1,16 @@
+name: dev
+services:
+  nextjs-better-auth-frontend-boilerplate:
+    image: hexbytedev/nextjs-better-auth-frontend-boilerplate:0.0.1
+    container_name: nextjs-better-auth-frontend-boilerplate
+    ports:
+      - "127.0.0.1:3100:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
