@@ -129,7 +129,7 @@ function EmailSection() {
 
     const { error: changeError } = await authClient.changeEmail({
       newEmail,
-      callbackURL: "/settings",
+      callbackURL: `${window.location.origin}/settings`,
     });
 
     if (changeError) {
@@ -337,7 +337,7 @@ function ConnectedAccountsSection() {
 
     const { error: linkError } = await authClient.linkSocial({
       provider,
-      callbackURL: "/settings",
+      callbackURL: `${window.location.origin}/settings`,
     });
 
     if (linkError) {
