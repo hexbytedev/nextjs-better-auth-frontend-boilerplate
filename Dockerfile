@@ -4,7 +4,7 @@
 
 # This Dockerfile.bun is specifically configured for projects using Bun
 
-FROM oven/bun:1.3.14 AS dependencies
+FROM oven/bun:1.4.1 AS dependencies
 
 # Set working directory
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
 # Stage 2: Build Next.js application in standalone mode
 # ============================================
 
-FROM oven/bun:1.3.14 AS builder
+FROM oven/bun:1.4.1 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -52,7 +52,7 @@ RUN bun run build
 # Stage 3: Run Next.js application
 # ============================================
 
-FROM oven/bun:1.3.14 AS runner
+FROM oven/bun:1.4.1 AS runner
 
 # Set working directory
 WORKDIR /app
